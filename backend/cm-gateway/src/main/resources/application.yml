@@ -1,0 +1,17 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: cm-gateway
+  cloud:
+    nacos:
+      server-addr: ${NACOS_SERVER:127.0.0.1:8848}
+      discovery:
+        locador:
+          enabled: true
+      config:
+        file-extension: yaml
+        import-check:
+          enabled: false
+
