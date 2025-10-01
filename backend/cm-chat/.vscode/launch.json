@@ -1,0 +1,43 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug FastAPI (Uvicorn)",
+  "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": [
+        "app.main:app",
+        "--host",
+        "${input:serverHost}",
+        "--port",
+        "${input:serverPort}",
+        "--reload"
+      ],
+      "console": "integratedTerminal",
+      "env": {
+        "ENVIRONMENT": "development"
+      },
+      "jinja": true,
+      "justMyCode": true
+    }
+  ],
+  "inputs": [
+    {
+      "id": "serverHost",
+      "type": "pickString",
+      "description": "Select host to bind",
+      "options": [
+        "127.0.0.1",
+        "0.0.0.0"
+      ],
+      "default": "127.0.0.1"
+    },
+    {
+      "id": "serverPort",
+      "type": "promptString",
+      "description": "Server port",
+      "default": "8002"
+    }
+  ]
+}
