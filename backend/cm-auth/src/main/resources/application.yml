@@ -1,9 +1,8 @@
 server:
-  port: 8000
-
+  port: 8001
 spring:
   application:
-    name: cm-gateway
+    name: cm-auth
   cloud:
     nacos:
       server-addr: ${NACOS_SERVER:127.0.0.1:8848}
