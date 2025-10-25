@@ -13,6 +13,9 @@ import lombok.Data;
 @Data
 @TableName(value = "`user`")
 public class UserDO {
+
+    public static final String USERNAME = "username";
+
     @TableId(value = "id", type = IdType.INPUT)
     private Long id;
 

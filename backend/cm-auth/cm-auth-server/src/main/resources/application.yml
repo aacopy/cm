@@ -1,8 +1,6 @@
-server:
-  port: 8001
 spring:
   application:
-    name: cm-auth
+    name: auth
   cloud:
     nacos:
       server-addr: ${NACOS_SERVER:127.0.0.1:8848}
@@ -10,5 +8,5 @@ spring:
       password: nacos
       config:
         file-extension: yaml
-        import-check:
-          enabled: false
+  config:
+    import: "nacos:${spring.application.name}.yaml"
