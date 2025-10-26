@@ -42,7 +42,7 @@ public class AccountAuthenticationFilter extends AbstractAuthenticationProcessin
         // 获取用户池、账号、密码、图形验证码
         String poolId = request.getParameter("poolId");
         poolId = (poolId != null) ? poolId.trim() : "";
-        String username = request.getParameter("username");
+        String username = request.getParameter("account");
         username = (username != null) ? username.trim() : "";
         String password = request.getParameter("password");
         password = (password != null) ? password : "";

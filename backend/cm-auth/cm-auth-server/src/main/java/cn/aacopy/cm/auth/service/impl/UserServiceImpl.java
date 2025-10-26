@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDO findAccount(String account) {
-        List<UserDO> list = userDao.list(new QueryWrapper<UserDO>().eq(UserDO.USERNAME, account));
+        List<UserDO> list = userDao.list(new QueryWrapper<UserDO>().eq(UserDO.COL_USERNAME, account));
         if (CollUtil.isNotEmpty(list)) {
             return list.get(0);
         }

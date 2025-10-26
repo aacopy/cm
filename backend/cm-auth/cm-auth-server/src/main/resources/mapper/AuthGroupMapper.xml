@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.aacopy.cm.auth.mapper.UserPoolMapper">
-  <resultMap id="BaseResultMap" type="cn.aacopy.cm.auth.model.entity.UserPoolDO">
+<mapper namespace="cn.aacopy.cm.auth.mapper.AuthGroupMapper">
+  <resultMap id="BaseResultMap" type="cn.aacopy.cm.auth.model.entity.AuthGroupDO">
     <!--@mbg.generated-->
-    <!--@Table user_pool-->
+    <!--@Table auth_group-->
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
     <result column="name" jdbcType="VARCHAR" property="name" />
-    <result column="short_code" jdbcType="VARCHAR" property="shortCode" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="status" jdbcType="TINYINT" property="status" />
     <result column="create_by" jdbcType="BIGINT" property="createBy" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_by" jdbcType="BIGINT" property="updateBy" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="deleted" jdbcType="CHAR" property="deleted" />
+    <result column="deleted" jdbcType="TINYINT" property="deleted" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, `name`, short_code, create_by, create_time, update_by, update_time, deleted
+    id, code, `name`, description, `status`, create_by, create_time, update_by, update_time, 
+    deleted
   </sql>
 </mapper>

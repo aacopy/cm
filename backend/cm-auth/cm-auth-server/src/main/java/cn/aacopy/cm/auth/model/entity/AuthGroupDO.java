@@ -6,11 +6,11 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * 用户表
+ * 认证组
  */
 @Data
-@TableName(value = "`user`")
-public class UserDO {
+@TableName(value = "auth_group")
+public class AuthGroupDO {
     /**
      * 主键
      */
@@ -18,58 +18,28 @@ public class UserDO {
     private Long id;
 
     /**
-     * 用户名
+     * 编码
      */
-    @TableField(value = "username")
-    private String username;
+    @TableField(value = "code")
+    private String code;
 
     /**
-     * 密码
+     * 名称
      */
-    @TableField(value = "`password`")
-    private String password;
+    @TableField(value = "`name`")
+    private String name;
 
     /**
-     * 加密算法
+     * 描述信息
      */
-    @TableField(value = "algorithm")
-    private String algorithm;
-
-    /**
-     * 邮箱
-     */
-    @TableField(value = "email")
-    private String email;
-
-    /**
-     * 手机号
-     */
-    @TableField(value = "phone")
-    private String phone;
-
-    /**
-     * 昵称
-     */
-    @TableField(value = "nickname")
-    private String nickname;
-
-    /**
-     * 头像URL
-     */
-    @TableField(value = "avatar")
-    private String avatar;
+    @TableField(value = "description")
+    private String description;
 
     /**
      * 状态（0禁用，1启用）
      */
     @TableField(value = "`status`")
     private Integer status;
-
-    /**
-     * 鉴权组id
-     */
-    @TableField(value = "auth_group_id")
-    private Long authGroupId;
 
     /**
      * 创建人
@@ -103,23 +73,13 @@ public class UserDO {
 
     public static final String COL_ID = "id";
 
-    public static final String COL_USERNAME = "username";
+    public static final String COL_CODE = "code";
 
-    public static final String COL_PASSWORD = "password";
+    public static final String COL_NAME = "name";
 
-    public static final String COL_ALGORITHM = "algorithm";
-
-    public static final String COL_EMAIL = "email";
-
-    public static final String COL_PHONE = "phone";
-
-    public static final String COL_NICKNAME = "nickname";
-
-    public static final String COL_AVATAR = "avatar";
+    public static final String COL_DESCRIPTION = "description";
 
     public static final String COL_STATUS = "status";
-
-    public static final String COL_AUTH_GROUP_ID = "auth_group_id";
 
     public static final String COL_CREATE_BY = "create_by";
 

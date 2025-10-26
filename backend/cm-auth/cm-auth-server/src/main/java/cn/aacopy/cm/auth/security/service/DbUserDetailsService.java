@@ -19,7 +19,7 @@ import javax.annotation.Resource;
  * @date 2025/10/24
  */
 @Component
-public class JdbcUserDetailsService implements UserDetailsService {
+public class DbUserDetailsService implements UserDetailsService {
 
     @Resource
     private UserService userService;
@@ -35,7 +35,7 @@ public class JdbcUserDetailsService implements UserDetailsService {
         }
 
         return User.withUsername(userDO.getUsername())
-                .password(userDO.getPassword())
+                .password("{" + userDO.getAlgorithm() + "}" + userDO.getPassword())
                 .authorities("ROLE_ADMIN")
                 .build();
     }

@@ -12,17 +12,17 @@
     <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="nickname" jdbcType="VARCHAR" property="nickname" />
     <result column="avatar" jdbcType="VARCHAR" property="avatar" />
-    <result column="status" jdbcType="INTEGER" property="status" />
-    <result column="user_pool_id" jdbcType="BIGINT" property="userPoolId" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+    <result column="auth_group_id" jdbcType="BIGINT" property="authGroupId" />
     <result column="create_by" jdbcType="BIGINT" property="createBy" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_by" jdbcType="BIGINT" property="updateBy" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="deleted" jdbcType="CHAR" property="deleted" />
+    <result column="deleted" jdbcType="TINYINT" property="deleted" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, username, `password`, algorithm, email, phone, nickname, avatar, `status`, user_pool_id, 
+    id, username, `password`, algorithm, email, phone, nickname, avatar, `status`, auth_group_id, 
     create_by, create_time, update_by, update_time, deleted
   </sql>
 </mapper>
