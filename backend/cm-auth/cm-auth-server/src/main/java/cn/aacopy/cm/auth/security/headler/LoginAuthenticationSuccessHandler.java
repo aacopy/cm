@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 
 /**
  * 登录成功处理器
@@ -105,9 +106,14 @@ public class LoginAuthenticationSuccessHandler implements AuthenticationSuccessH
                 .principalName(authentication.getName())
                 .authorizedScopes(registeredClient.getScopes())
                 .authorizationGrantType(ACCOUNT_PASSWORD_GRANT)
-                .accessToken(accessToken)
+                .attribute(Principal.class.getName(), authentication)
+                .token(accessToken, metadata -> {
+                    metadata.put(OAuth2Authorization.Token.CLAIMS_METADATA_NAME, accessJwtToken.getClaims());
+                    metadata.put(OAuth2Authorization.Token.INVALIDATED_METADATA_NAME, false);
+                })
                 .refreshToken(refreshToken)
-                .token(idToken)
+                .token(idToken, metadata ->
+                        metadata.put(OAuth2Authorization.Token.CLAIMS_METADATA_NAME, idToken.getClaims()))
                 .build();
         authorizationService.save(authorization); // 保存授权信息
 
