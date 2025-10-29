@@ -27,6 +27,40 @@ const rules: FormRules<LoginFormModel> = {
 const loading = ref(false)
 const loginEndpoint = 'http://127.0.0.1:8001/v1/login/account'
 
+const toRecord = (value: unknown): Record<string, unknown> => {
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    return value as Record<string, unknown>
+  }
+  return {}
+}
+
+const resolveExpiryDate = (input?: unknown): Date => {
+  const now = Date.now()
+  if (typeof input === 'number' && Number.isFinite(input)) {
+    if (input > 1e12) {
+      return new Date(input)
+    }
+    return new Date(now + input * 1000)
+  }
+  if (typeof input === 'string') {
+    const numeric = Number(input)
+    if (Number.isFinite(numeric)) {
+      return resolveExpiryDate(numeric)
+    }
+  }
+  return new Date(now + 24 * 60 * 60 * 1000)
+}
+
+const setCookie = (name: string, value?: string, expiresAt?: unknown) => {
+  if (!value) return
+  const expiry = resolveExpiryDate(expiresAt)
+  let cookie = `${name}=${encodeURIComponent(value)}; expires=${expiry.toUTCString()}; path=/; SameSite=Lax`
+  if (window.location.protocol === 'https:') {
+    cookie += '; Secure'
+  }
+  document.cookie = cookie
+}
+
 const handleSubmit = async () => {
   if (loading.value) return
   const formInstance = formRef.value
@@ -72,15 +106,39 @@ const handleSubmit = async () => {
       }
     }
 
+    const responseBody = toRecord(payload)
+    const codeValue = 'code' in responseBody ? Number(responseBody.code) : 0
+    if (Number.isFinite(codeValue) && codeValue !== 0) {
+      throw new Error(String(responseBody.msg ?? '登录失败，请稍后再试'))
+    }
+
+    const payloadData = toRecord(responseBody.data ?? responseBody)
+
+    const accessToken = payloadData.accessToken ? String(payloadData.accessToken) : undefined
+    const refreshToken = payloadData.refreshToken ? String(payloadData.refreshToken) : undefined
+    const idToken = payloadData.idToken ? String(payloadData.idToken) : undefined
+    const expiresIn = payloadData.expiresIn
+
+    setCookie('accessToken', accessToken, expiresIn)
+    setCookie('refreshToken', refreshToken, expiresIn)
+    setCookie('idToken', idToken, expiresIn)
+
     const userProfile: UserProfile = {
-      account: String(payload.account ?? formModel.account),
-      displayName: String(payload.displayName ?? payload.name ?? formModel.account),
-      email: payload.email ? String(payload.email) : undefined,
-      mobile: payload.mobile ? String(payload.mobile) : undefined,
-      lastLoginAt: payload.lastLoginAt
-        ? String(payload.lastLoginAt)
+      account: String(
+        payloadData.username ?? payloadData.account ?? formModel.account
+      ),
+      displayName: String(
+        payloadData.displayName ??
+          payloadData.name ??
+          payloadData.username ??
+          formModel.account
+      ),
+      email: payloadData.email ? String(payloadData.email) : undefined,
+      mobile: payloadData.mobile ? String(payloadData.mobile) : undefined,
+      lastLoginAt: payloadData.lastLoginAt
+        ? String(payloadData.lastLoginAt)
         : new Date().toISOString(),
-      token: payload.token ? String(payload.token) : undefined
+      token: accessToken
     }
 
     authStore.setUser(userProfile)
