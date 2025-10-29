@@ -10,3 +10,14 @@ spring:
         file-extension: yaml
   config:
     import: "nacos:${spring.application.name}.yaml"
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: Ycm@1024
+    timeout: 5s
+    lettuce:
+      pool:
+        max-active: 20
+        max-idle: 20
+        min-idle: 5
+        max-wait: 1s

@@ -17,4 +17,8 @@ public enum CommonStatusEnum {
     private final Integer code;
     private final String name;
 
+    public static boolean isEnabled(Integer code) {
+        return ENABLED.code.equals(code);
+    }
+
 }

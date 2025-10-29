@@ -16,22 +16,12 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
-import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
-import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
-import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.oauth2.server.authorization.token.*;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
@@ -51,6 +41,7 @@ import java.util.UUID;
 
 /**
  * 认证服务器配置类
+ *
  * @author cmyang
  * @date 2025/10/24
  */
@@ -68,7 +59,7 @@ public class AuthServerConfig {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         // 开启 OIDC
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-        // 开启oidc
+                // 开启oidc
                 .oidc(Customizer.withDefaults());
         // 设置用户同意授权页面
 //                .authorizationEndpoint(authorizationEndpoint ->
@@ -98,7 +89,7 @@ public class AuthServerConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests(authorizeRequests -> authorizeRequests
-                        .antMatchers( "/aabb").permitAll()
+                        .antMatchers("/aabb").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
@@ -133,32 +124,6 @@ public class AuthServerConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
-
-    @Bean
-    public RegisteredClientRepository registeredClientRepository() {
-        RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("qauth")
-                .clientSecret("{noop}123456")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://127.0.0.1:30177/fun1")
-                .scope(OidcScopes.OPENID)
-                .scope(OidcScopes.PROFILE)
-                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
-                .tokenSettings(TokenSettings.builder().reuseRefreshTokens(false).build())
-                .build();
-
-        return new InMemoryRegisteredClientRepository(oidcClient);
-    }
-
-    /**
-     * 存储新授权和查询现有授权的核心组件
-     */
-    @Bean
-    public OAuth2AuthorizationService authorizationService() {
-        return new InMemoryOAuth2AuthorizationService();
     }
 
     @Bean
@@ -209,6 +174,7 @@ public class AuthServerConfig {
 
     /**
      * issuer、端点等
+     *
      * @return
      */
     @Bean
