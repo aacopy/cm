@@ -34,6 +34,8 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
     private static final String REDIS_OAUTH2_RT_PREFIX = "AUTH:OAUTH2:RT:";
     // Authorization Code Redis键前缀
     private static final String REDIS_OAUTH2_CD_PREFIX = "AUTH:OAUTH2:CD:";
+    // Authorization State Redis键前缀
+    private static final String REDIS_OAUTH2_ST_PREFIX = "AUTH:OAUTH2:ST:";
 
     @Override
     public void save(OAuth2Authorization authorization) {
@@ -42,20 +44,34 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
         }
         String id = authorization.getId();
 
-        // 处理授权码模式
-        OAuth2Authorization.Token<OAuth2AuthorizationCode> authorizationCode = authorization.getToken(OAuth2AuthorizationCode.class);
-        if (authorizationCode != null) {
-            long cdExpiresIn = ChronoUnit.SECONDS.between(authorizationCode.getToken().getIssuedAt(), authorizationCode.getToken().getExpiresAt());
-            // Key ID , Value OAuth2Authorization Java对象
-            redisTemplate.opsForValue().set(REDIS_OAUTH2_ID_PREFIX + id, authorization, cdExpiresIn, TimeUnit.SECONDS);
-            // Key Authorization Code , Value OAuth2Authorization ID
-            redisTemplate.opsForValue().set(REDIS_OAUTH2_ID_PREFIX + authorizationCode.getToken().getTokenValue(), id, cdExpiresIn, TimeUnit.SECONDS);
+        // 处理State模式
+        String state = authorization.getAttribute(OAuth2ParameterNames.STATE);
+        if (StrUtil.isNotBlank(state)) {
+            redisTemplate.opsForValue().set(REDIS_OAUTH2_ID_PREFIX + id, authorization, 10, TimeUnit.MINUTES);
+            // Key State , Value OAuth2Authorization ID
+            redisTemplate.opsForValue().set(REDIS_OAUTH2_ST_PREFIX + state, id, 10, TimeUnit.MINUTES);
             return;
         }
 
-        // 处理Access Token和Refresh Token
+        OAuth2Authorization.Token<OAuth2AuthorizationCode> authorizationCode = authorization.getToken(OAuth2AuthorizationCode.class);
         OAuth2Authorization.Token<OAuth2AccessToken> accessToken = authorization.getAccessToken();
         OAuth2Authorization.Token<OAuth2RefreshToken> refreshToken = authorization.getRefreshToken();
+        // 处理授权码模式
+        if (authorizationCode != null) {
+            long cdExpiresIn = ChronoUnit.SECONDS.between(authorizationCode.getToken().getIssuedAt(), authorizationCode.getToken().getExpiresAt());
+            if (accessToken == null) {
+                // Key ID , Value OAuth2Authorization Java对象
+                redisTemplate.opsForValue().set(REDIS_OAUTH2_ID_PREFIX + id, authorization, cdExpiresIn, TimeUnit.SECONDS);
+            }
+            // Key Authorization Code , Value OAuth2Authorization ID
+            redisTemplate.opsForValue().set(REDIS_OAUTH2_CD_PREFIX + authorizationCode.getToken().getTokenValue(), id, cdExpiresIn, TimeUnit.SECONDS);
+            if (accessToken == null) {
+                return;
+            }
+        }
+
+        // 处理Access Token和Refresh Token
+
         if (accessToken == null || refreshToken == null) {
             throw new OAuth2AuthorizationException(new OAuth2Error(OAuth2ErrorCodes.INVALID_TOKEN));
         }
@@ -76,6 +92,9 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
         // 删除所有相关缓存
         String id = authorization.getId();
         redisTemplate.delete(REDIS_OAUTH2_ID_PREFIX + id);
+        if (StrUtil.isNotBlank(authorization.getAttribute(OAuth2ParameterNames.STATE))) {
+            redisTemplate.delete(REDIS_OAUTH2_ST_PREFIX + authorization.getAttribute(OAuth2ParameterNames.STATE));
+        }
         if (authorization.getToken(OAuth2AuthorizationCode.class) != null) {
             redisTemplate.delete(REDIS_OAUTH2_CD_PREFIX + authorization.getToken(OAuth2AuthorizationCode.class).getToken().getTokenValue());
         }
@@ -101,8 +120,19 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
         if (StrUtil.isBlank(token) || tokenType == null) {
             return null;
         }
-        // 处理Authorization Code类型
-        if (OAuth2ParameterNames.CODE.equals(tokenType.getValue())) {
+        if (OAuth2ParameterNames.STATE.equals(tokenType.getValue())) {
+            // 处理State类型
+            String id = (String) redisTemplate.opsForValue().get(REDIS_OAUTH2_ST_PREFIX + token);
+            if (StrUtil.isNotBlank(id)) {
+                OAuth2Authorization authorization = findById(id);
+                if (authorization != null
+                        && token.equals(authorization.getAttribute(OAuth2ParameterNames.STATE))) {
+                    return authorization;
+                }
+                // 删除无效的缓存
+                redisTemplate.delete(REDIS_OAUTH2_ST_PREFIX + token);
+            }
+        } else if (OAuth2ParameterNames.CODE.equals(tokenType.getValue())) { // 处理Authorization Code类型
             // 先获取ID
             String id = (String) redisTemplate.opsForValue().get(REDIS_OAUTH2_CD_PREFIX + token);
             if (StrUtil.isNotBlank(id)) {
@@ -117,7 +147,6 @@ public class RedisOAuth2AuthorizationService implements OAuth2AuthorizationServi
                 // 删除无效的缓存
                 redisTemplate.delete(REDIS_OAUTH2_CD_PREFIX + token);
             }
-            return null;
         } else if (OAuth2TokenType.ACCESS_TOKEN == tokenType) { // 根据Token类型从Redis获取对应的OAuth2Authorization对象
             // 先获取ID
             String id = (String) redisTemplate.opsForValue().get(REDIS_OAUTH2_AT_PREFIX + token);

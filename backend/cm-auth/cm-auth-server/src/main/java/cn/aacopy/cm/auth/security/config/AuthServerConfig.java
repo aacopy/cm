@@ -89,7 +89,7 @@ public class AuthServerConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests(authorizeRequests -> authorizeRequests
-                        .antMatchers("/aabb").permitAll()
+                        .antMatchers("/fun1").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
