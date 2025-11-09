@@ -116,7 +116,7 @@ public class AuthServerConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList("http://127.0.0.1:5173"));
+        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3006"));
         configuration.setAllowedMethods(Collections.singletonList("*"));
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.setAllowCredentials(true); // allow cookies / Authorization header
