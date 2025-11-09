@@ -2,8 +2,8 @@
  * 接口状态码
  */
 export enum ApiStatus {
-  success = 200, // 成功
-  error = 400, // 错误
+  success = 0, // 成功
+  error = -1, // 错误
   unauthorized = 401, // 未授权
   forbidden = 403, // 禁止访问
   notFound = 404, // 未找到

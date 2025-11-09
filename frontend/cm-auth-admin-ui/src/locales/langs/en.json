@@ -252,6 +252,7 @@
     },
     "system": {
       "title": "System Settings",
+      "authGroup": "Auth Group Manage",
       "user": "User Manage",
       "role": "Role Manage",
       "userCenter": "User Center",

@@ -252,6 +252,7 @@
     },
     "system": {
       "title": "系统管理",
+      "authGroup": "认证组管理",
       "user": "用户管理",
       "role": "角色管理",
       "userCenter": "个人中心",

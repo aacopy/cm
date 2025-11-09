@@ -37,13 +37,13 @@ declare namespace Api {
   namespace Auth {
     /** 登录参数 */
     interface LoginParams {
-      userName: string
+      account: string
       password: string
     }
 
     /** 登录响应 */
     interface LoginResponse {
-      token: string
+      accessToken: string
       refreshToken: string
     }
 
@@ -60,6 +60,31 @@ declare namespace Api {
 
   /** 系统管理类型 */
   namespace SystemManage {
+    type AuthGroupPage = Api.Common.PaginatedResponse<AuthGroupListItem>
+
+    interface AuthGroupListItem {
+      id: number
+      name: string
+      code: string
+      description: string
+      createBy: string
+      createTime: string
+      updateBy: string
+      updateTime: string
+    }
+
+    // type AuthGroupSaveParams = Pick<
+    //   AuthGroupListItem,
+    //   'name' | 'code' | 'description'
+    // > & {
+    //   id?: number
+    // }
+
+    type AuthGroupSaveParams = Partial<Pick<
+      AuthGroupListItem,
+      'id' | 'name' | 'code' | 'description'
+    >>
+
     /** 用户列表 */
     type UserList = Api.Common.PaginatedResponse<UserListItem>
 

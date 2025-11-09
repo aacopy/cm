@@ -19,9 +19,11 @@ let unauthorizedTimer: NodeJS.Timeout | null = null
 interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
   showErrorMessage?: boolean
   showSuccessMessage?: boolean
+  formUrlEncoded?: boolean
 }
 
 const { VITE_API_URL, VITE_WITH_CREDENTIALS } = import.meta.env
+const API_PREFIX = import.meta.env.VITE_API_PREFIX
 
 /** Axios实例 */
 const axiosInstance = axios.create({
@@ -48,7 +50,7 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (request: InternalAxiosRequestConfig) => {
     const { accessToken } = useUserStore()
-    if (accessToken) request.headers.set('Authorization', accessToken)
+    if (accessToken) request.headers.set('Authorization', `Bearer ${accessToken}`)
 
     if (request.data && !(request.data instanceof FormData) && !request.headers['Content-Type']) {
       request.headers.set('Content-Type', 'application/json')
@@ -145,8 +147,20 @@ function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+/** 添加API前缀 */
+function withPrefix(url: string) {
+  const normalized = url.startsWith('/') ? url : `/${url}`
+  return `${API_PREFIX}${normalized}`
+}
+
 /** 请求函数 */
 async function request<T = any>(config: ExtendedAxiosRequestConfig): Promise<T> {
+  // 自动添加前缀
+  if (config.url) config.url = withPrefix(config.url)
+  // 设置请求方式
+  if (config.formUrlEncoded) {
+    config.headers = { ...config.headers, 'Content-Type': 'application/x-www-form-urlencoded' }
+  }
   // POST | PUT 参数自动填充
   if (
     ['POST', 'PUT'].includes(config.method?.toUpperCase() || '') &&

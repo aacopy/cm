@@ -11,6 +11,16 @@ export const systemRoutes: AppRouteRecord = {
   },
   children: [
     {
+      path: 'auth-group',
+      name: 'AuthGroup',
+      component: '/system/auth-group',
+      meta: {
+        title: 'menus.system.authGroup',
+        keepAlive: true,
+        roles: ['R_SUPER', 'R_ADMIN']
+      }
+    },
+    {
       path: 'user',
       name: 'User',
       component: '/system/user',
