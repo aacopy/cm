@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: cm-gateway
+    name: gateway
   cloud:
     nacos:
       server-addr: ${NACOS_SERVER:127.0.0.1:8848}
@@ -13,3 +13,7 @@ spring:
         file-extension: yaml
         import-check:
           enabled: false
+    gateway:
+      discovery:
+        locator:
+          enabled: true
