@@ -1,0 +1,11 @@
+cn\aacopy\cm\starter\web\jackson\JacksonConfig.class
+cn\aacopy\cm\starter\web\swagger\SwaggerConfig.class
+cn\aacopy\cm\starter\web\exception\ForbiddenException.class
+cn\aacopy\cm\starter\web\exception\CommonErrorCode.class
+cn\aacopy\cm\starter\web\pojo\Result.class
+cn\aacopy\cm\starter\web\exception\ErrorCode.class
+cn\aacopy\cm\starter\web\exception\UnauthorizedException.class
+cn\aacopy\cm\starter\web\exception\ServiceException.class
+cn\aacopy\cm\starter\web\pojo\enums\YesNoEnum.class
+cn\aacopy\cm\starter\web\exception\GlobalExceptionHandler.class
+cn\aacopy\cm\starter\web\util\CommonUtil.class
