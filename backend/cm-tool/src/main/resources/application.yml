@@ -1,0 +1,16 @@
+server:
+  port: 8003
+spring:
+  application:
+    name: tool
+  cloud:
+    nacos:
+      server-addr: ${NACOS_SERVER:127.0.0.1:8848}
+      username: nacos
+      password: nacos
+      config:
+        file-extension: yaml
+  config:
+    import:
+      - "nacos:common.yaml"
+      - "nacos:${spring.application.name}.yaml"
