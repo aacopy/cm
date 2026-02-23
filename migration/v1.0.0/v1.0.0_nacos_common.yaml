@@ -1,0 +1,23 @@
+spring:
+  redis:
+    host: ${cm.base.host}
+    port: 6379
+    password: Ycm@1024
+    timeout: 5s
+    lettuce:
+      pool:
+        max-active: 20
+        max-idle: 20
+        min-idle: 5
+        max-wait: 1s
+  datasource:
+    url: jdbc:mysql://${cm.base.host}:3306/cm_${spring.application.name}?useSSL=false&serverTimezone=UTC&characterEncoding=utf8
+    username: root
+    password: Ycm@1024
+    driver-class-name: com.mysql.cj.jdbc.Driver
+logging:
+  level:
+    root: info
+cm:
+  base:
+    host: 127.0.0.1
