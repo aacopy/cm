@@ -1,0 +1,3 @@
+cn.aacopy.cm.starter.web.jackson.JacksonConfig
+cn.aacopy.cm.starter.web.swagger.SwaggerConfig
+cn.aacopy.cm.starter.web.i18n.I18nConfig
