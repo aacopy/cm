@@ -48,6 +48,25 @@ public class AuthServerConfig {
     private AuthProperties authProperties;
 
     /**
+     * 公共接口，不需要认证
+     */
+    @Bean
+    @Order(0)
+    public SecurityFilterChain publicSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .cors(Customizer.withDefaults())
+                .requestMatchers((requestMatchers) ->  requestMatchers.antMatchers(
+                        "/message/sendVerificationCode" // 发送验证码
+                ))
+                .authorizeRequests(authorizeRequests -> {
+                    authorizeRequests.anyRequest().permitAll();
+                });
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        return http.build();
+    }
+
+    /**
      * OIDC和单点登录
      */
     @Bean

@@ -4,7 +4,11 @@
 *.iml
 *.ipr
 
+node_modules
+dist
+
 ### VS Code ###
 #.vscode/
 
 .obsidian
+.claude/settings.local.json
